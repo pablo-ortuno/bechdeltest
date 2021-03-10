@@ -1,0 +1,144 @@
+---
+title: "Bechdel Test"
+subtitle: "A Tidytuesday data visualization"
+author: "Pablo Ortuno"
+date: "10/03/2021"
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(dpi=300)
+knitr::opts_knit$set(dev.args = list(type = "cairo"))
+
+trace(grDevices:::png, quote({
+  if (missing(type) && missing(antialias)) {
+    type <- "cairo-png"
+    antialias <- "subpixel"
+  }
+}), print = FALSE)
+
+```
+
+```{r libraries, message = FALSE, include = FALSE}
+library(tidyverse)
+library(Cairo)
+theme_set(theme_minimal())
+
+```
+
+#### Load and clean data
+
+```{r load_data, message = FALSE, results='hide'}
+
+tuesdata <- tidytuesdayR::tt_load('2021-03-09')
+raw_bechdel <- tuesdata[["raw_bechdel"]]
+movies <- tuesdata[["movies"]]
+
+```
+***
+```{r clean_data, message = FALSE, warning=FALSE}
+reject = c("test", "imdb", "budget", "domgross", "intgross", "code", "period_code", "decade_code", "imdb_id", "response", "poster", "error")
+bracket_levels = c('0-200', '200-400', '400-600','600-800','800-1000','1000-1200','1200-1400','1400-1600','1600-1800','1800-2000','2000+')
+
+clean_movies <- movies %>%
+  select(!reject) %>%
+  rename('budget' = budget_2013,
+         'domgross' = domgross_2013,
+         'intgross' = intgross_2013,
+         'result' = binary) %>%
+  mutate(domgross = as.integer(domgross),
+         intgross = as.integer(intgross),
+         total_gross = (domgross + intgross)*(10^-6),
+         bracket = case_when(
+           0 <= total_gross & total_gross < 200 ~ '0-200',
+           200 <= total_gross & total_gross < 400 ~ '200-400',
+           400 <= total_gross & total_gross < 600 ~ '400-600',
+           600 <= total_gross & total_gross < 800 ~ '600-800',
+           800 <= total_gross & total_gross < 1000 ~ '800-1000',
+           1000 <= total_gross & total_gross < 1200 ~ '1000-1200',
+           1200 <= total_gross & total_gross < 1400 ~ '1200-1400',
+           1400 <= total_gross & total_gross < 1600 ~ '1400-1600',
+           1600 <= total_gross & total_gross < 1800 ~ '1600-1800',
+           1800 <= total_gross & total_gross < 2000 ~ '1800-2000',
+           2000 < total_gross ~ '2000+'))
+
+clean_movies$bracket <- factor(clean_movies$bracket, levels = bracket_levels)
+
+```
+
+### Figures
+
+```{r pass_and_fail, echo = FALSE}
+
+clean_movies %>%
+  group_by(result) %>%
+  select(result) %>%
+  count() %>%
+  ggplot(aes(x = result, y = n, fill = result)) +
+  geom_col(width = 0.3, show.legend = FALSE) +
+  labs(
+    title = "Number of movies",
+    subtitle = "By their Bechdel test result",
+    x = "Result",
+    y = "Number of movies"
+  ) +
+  theme() +
+  scale_fill_viridis_d()
+
+```
+
+```{r passes_fails_per_year, echo = FALSE}
+
+clean_movies %>%
+  group_by(year, result) %>%
+  select(year, result) %>%
+  count() %>%
+  ggplot(aes(x=year, y=n, colour=result)) +
+  geom_line(size = 1) +
+  labs(title = "Number of movies per year",
+       subtitle = "By their Bechdel test result",
+       x = "Year",
+       y = "Number of movies",
+       colour = "Bechdel test result") +
+  theme()
+
+```
+
+```{r lower_bracket, echo = FALSE}
+
+clean_movies %>%
+  filter(total_gross < 1000) %>%
+  group_by(bracket) %>%
+  count(bracket, result) %>%
+  ggplot(aes(x = bracket, y=n, fill = result)) +
+  geom_col() +
+  labs(
+    title = "Number of movies with total gross earnings under 1000 million",
+    subtitle = "By their Bechdel test results",
+    x = "Gross earnings bracket",
+    y = "Number of movies"
+  )
+
+```
+
+
+```{r upper_bracket, echo = FALSE}
+
+clean_movies %>%
+  filter(total_gross > 1000) %>%
+  group_by(bracket) %>%
+  count(bracket, result) %>%
+  ggplot(aes(x = bracket, y=n, fill = result)) +
+  geom_col() +
+  labs(
+  title = "Number of movies with total gross earnings over 1000 million",
+  subtitle = "By their Bechdel test results",
+  x = "Gross earnings bracket",
+  y = "Number of movies"
+  )
+
+```
+

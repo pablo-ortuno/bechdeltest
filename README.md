@@ -1,2 +1,3 @@
 # tidytuesday
-Repository for various data visualizations involving the TidyTuesday data packages
+Data visualization on the Bechdel test dataset provided by Tidytuesday
+
