@@ -45,6 +45,9 @@ clean_movies$bracket <- factor(clean_movies$bracket, levels = bracket_levels)
 
 ![](Bechdel-Test_files/figure-gfm/pass_and_fail-1.png)<!-- -->
 
+Figure 1 shows how there are more movies which fail the Bechdel test. In
+fact, there are 991 movies that fail the test, and 803 which pass it.
+
 ![](Bechdel-Test_files/figure-gfm/passes_fails_per_year-1.png)<!-- -->
 
 ![](Bechdel-Test_files/figure-gfm/lower_bracket-1.png)<!-- -->

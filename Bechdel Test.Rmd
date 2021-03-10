@@ -59,7 +59,6 @@ clean_movies$bracket <- factor(clean_movies$bracket, levels = bracket_levels)
 ```
 
 ### Figures
-
 ```{r pass_and_fail, echo = FALSE}
 
 clean_movies %>%
@@ -72,12 +71,15 @@ clean_movies %>%
     title = "Number of movies",
     subtitle = "By their Bechdel test result",
     x = "Result",
-    y = "Number of movies"
+    y = "Number of movies",
+    caption = "Figure 1"
   ) +
   theme() +
   scale_fill_viridis_d()
 
 ```
+
+Figure 1 shows how there are more movies which fail the Bechdel test. In fact, there are 991 movies that fail the test, and 803 which pass it.
 
 ```{r passes_fails_per_year, echo = FALSE}
 
@@ -91,7 +93,8 @@ clean_movies %>%
        subtitle = "By their Bechdel test result",
        x = "Year",
        y = "Number of movies",
-       colour = "Bechdel test result") +
+       colour = "Bechdel test result",
+       caption = "Figure 2") +
   theme()
 
 ```
@@ -108,7 +111,8 @@ clean_movies %>%
     title = "Number of movies with total gross earnings under 1000 million",
     subtitle = "By their Bechdel test results",
     x = "Gross earnings bracket",
-    y = "Number of movies"
+    y = "Number of movies",
+    caption = "Figure 3"
   )
 
 ```
@@ -126,7 +130,8 @@ clean_movies %>%
   title = "Number of movies with total gross earnings over 1000 million",
   subtitle = "By their Bechdel test results",
   x = "Gross earnings bracket",
-  y = "Number of movies"
+  y = "Number of movies",
+  caption = "Figure 4"
   )
 
 ```
