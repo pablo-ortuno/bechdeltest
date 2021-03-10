@@ -6,9 +6,8 @@ Pablo Ortuno
 #### Load and clean data
 
 ``` r
-tuesdata <- tidytuesdayR::tt_load('2021-03-09')
-raw_bechdel <- tuesdata[["raw_bechdel"]]
-movies <- tuesdata[["movies"]]
+raw_bechdel <- read.csv("C:\\Users\\pablo\\Documents\\R Projects\\tidytuesday\\Data\\raw_bechdel.csv")
+movies <- read.csv("C:\\Users\\pablo\\Documents\\R Projects\\tidytuesday\\Data\\movies.csv")
 ```
 
 ------------------------------------------------------------------------

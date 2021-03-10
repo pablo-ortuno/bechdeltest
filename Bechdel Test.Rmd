@@ -9,16 +9,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(dpi=300)
-knitr::opts_knit$set(dev.args = list(type = "cairo"))
-
-trace(grDevices:::png, quote({
-  if (missing(type) && missing(antialias)) {
-    type <- "cairo-png"
-    antialias <- "subpixel"
-  }
-}), print = FALSE)
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
 
 ```
 
@@ -26,16 +17,14 @@ trace(grDevices:::png, quote({
 library(tidyverse)
 library(Cairo)
 theme_set(theme_minimal())
-
 ```
 
 #### Load and clean data
 
 ```{r load_data, message = FALSE, results='hide'}
 
-tuesdata <- tidytuesdayR::tt_load('2021-03-09')
-raw_bechdel <- tuesdata[["raw_bechdel"]]
-movies <- tuesdata[["movies"]]
+raw_bechdel <- read.csv("C:\\Users\\pablo\\Documents\\R Projects\\tidytuesday\\Data\\raw_bechdel.csv")
+movies <- read.csv("C:\\Users\\pablo\\Documents\\R Projects\\tidytuesday\\Data\\movies.csv")
 
 ```
 ***
@@ -97,7 +86,7 @@ clean_movies %>%
   select(year, result) %>%
   count() %>%
   ggplot(aes(x=year, y=n, colour=result)) +
-  geom_line(size = 1) +
+  geom_line(size = 0.5) +
   labs(title = "Number of movies per year",
        subtitle = "By their Bechdel test result",
        x = "Year",
