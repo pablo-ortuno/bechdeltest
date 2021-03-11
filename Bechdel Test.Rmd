@@ -82,13 +82,13 @@ clean_movies %>%
 Figure 1 shows how there are more movies which fail the Bechdel test. In fact, there are 991 movies that fail the test, and 803 which pass it.
 
 ```{r passes_fails_per_year, echo = FALSE}
-
 clean_movies %>%
   group_by(year, result) %>%
   select(year, result) %>%
   count() %>%
   ggplot(aes(x=year, y=n, colour=result)) +
   geom_line(size = 0.5) +
+  geom_smooth(method = "loess", formula = y~x, alpha = 0.2) +
   labs(title = "Number of movies per year",
        subtitle = "By their Bechdel test result",
        x = "Year",
@@ -96,8 +96,45 @@ clean_movies %>%
        colour = "Bechdel test result",
        caption = "Figure 2") +
   theme()
+```
+
+Figure 2 shows the evolution from 1970 to 2013 in the number of movies which pass or fail the Bechdel test. Even though the Bechdel test was introduced in 1985, there doesn't seem to have been a clear pre/post-Bechdel shift. The figure shows how approximately the number of movies released every year which fail the Bechdel test is greater than the number of movies which pass it.
+
+```{r rates_of_change, echo = FALSE, message = FALSE, warning = FALSE}
+
+rates_of_change <- clean_movies %>%
+  group_by(year, result) %>%
+  select(year, result) %>%
+  count %>%
+  pivot_wider(names_from = result, values_from = n) %>%
+  mutate(ratePass = 0,
+         rateFail = 0,
+         PASS = ifelse(is.na(PASS), 0, PASS),
+         FAIL = ifelse(is.na(FAIL), 0, FAIL))
+
+for (i in 1:(nrow(rates_of_change))) {
+  rates_of_change[i,4] = rates_of_change[i+1, 2] - rates_of_change[i, 2] 
+  rates_of_change[i,5] = rates_of_change[i+1, 3] - rates_of_change[i, 3]
+}
+
+rates_of_change %>%
+  group_by(year) %>%
+  select(ratePass, rateFail) %>%
+  pivot_longer(cols = c(ratePass, rateFail), names_to = "binary", values_to = "count") %>%
+  ggplot(aes(x = year, y = count, color = binary)) +
+  geom_point(size = 0.5) +
+  geom_smooth(method = "loess", formula = y~x, alpha = 0.2) +
+  facet_wrap(~binary, nrow = 1, ncol = 2) +
+  labs(title = "Rate of change of number of movies",
+       subtitle = "With respect to the next year, by their Bechdel test result",
+       x = "Year",
+       y = "Rate of change",
+       caption = "Figure 3") +
+  theme()
 
 ```
+
+This figure illustrates the rate of change of movies which pass or fail the Bechdel test. Ifthe  Bechdel test had a relevant impact in the movie making industry, we would see a positive trend in the 'pass' graph after 1985, which is not the case. Both graphs having similar rates of change indicates how the movie industry has upscaled it's movie production without taking into consideration the Bechdel test .
 
 ```{r lower_bracket, echo = FALSE}
 
@@ -117,6 +154,7 @@ clean_movies %>%
 
 ```
 
+This figure looks at all the movies in the dataset with total gross earnings (domestic and international) under 1000 million USD. In all of the brackets the distribution of gross earnings is roughly split equally between movies which pass or not the Bechdel test.
 
 ```{r upper_bracket, echo = FALSE}
 
@@ -136,3 +174,23 @@ clean_movies %>%
 
 ```
 
+This figure looks at all the movies in the dataset with total gross earnings over 1000 million.
+We can see how movies which fail the Bechdel test have greater earnings in the '1000-1200', '1400-1600', '1600-1800', and '1800-2000' brackets. The '1200-1400' bracket is split more equally. The '2000+' bracket is the only bracket in the figure where "Pass" movies outnumber "Fail" movies.
+The three movies (in gross earnings order) in this bracket are: 'Star Wars: Episode I - The Phantom Menace', 'Star Wars: Episode VI - Return of the Jedi', and 'Grease'. '.5Star Wars: Episode I' and 'Grease' pass the Bechdel test. 'Star Wars: Episode VI' doesn't
+
+```{r rating_distribution, warning = FALSE, echo=FALSE}
+clean_movies %>%
+  group_by(result, imdb_rating) %>%
+  count() %>%
+  ggplot(aes(x = imdb_rating, y = n, fill = result, color = result)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~result, nrow = 1, ncol = 2) +
+  labs(
+    title = "Distribution of Imdb ratings",
+    subtitle = "by Bechdel test result",
+    x = "Imdb rating",
+    y = "Number of movies"
+  )
+```
+
+Distribution of Imdb ratings is left-skewed in both cases and quite similar. The distributions between 2 and 8 ratings are quite similar. However, many more movies which fail the Bechdel test have an 8+ rating.
