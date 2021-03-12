@@ -10,12 +10,13 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
-
+knitr::opts_chunk$set(fig.align = 'center', out.height = '60%')
 ```
 
 ```{r libraries, message = FALSE, include = FALSE}
 library(tidyverse)
 library(Cairo)
+library(cowplot)
 theme_set(theme_minimal())
 ```
 
@@ -23,8 +24,8 @@ theme_set(theme_minimal())
 
 ```{r load_data, message = FALSE, results='hide'}
 
-raw_bechdel <- read.csv("C:\\Users\\pablo\\Documents\\R Projects\\tidytuesday\\Data\\raw_bechdel.csv")
-movies <- read.csv("C:\\Users\\pablo\\Documents\\R Projects\\tidytuesday\\Data\\movies.csv")
+raw_bechdel <- read.csv("C:\\Users\\pablo\\Documents\\R Projects\\bechdeltest\\Data\\raw_bechdel.csv")
+movies <- read.csv("C:\\Users\\pablo\\Documents\\R Projects\\bechdeltest\\Data\\movies.csv")
 
 ```
 ***
@@ -138,19 +139,35 @@ This figure illustrates the rate of change of movies which pass or fail the Bech
 
 ```{r lower_bracket, echo = FALSE}
 
-clean_movies %>%
+p1 <- clean_movies %>%
   filter(total_gross < 1000) %>%
   group_by(bracket) %>%
   count(bracket, result) %>%
   ggplot(aes(x = bracket, y=n, fill = result)) +
   geom_col() +
   labs(
-    title = "Number of movies with total gross earnings under 1000 million",
+    title = "Total gross earnings under 1000 million",
     subtitle = "By their Bechdel test results",
     x = "Gross earnings bracket",
     y = "Number of movies",
-    caption = "Figure 3"
+    caption = "Figure 4"
   )
+
+p2 <- clean_movies %>%
+  filter(total_gross > 1000) %>%
+  group_by(bracket) %>%
+  count(bracket, result) %>%
+  ggplot(aes(x = bracket, y=n, fill = result)) +
+  geom_col() +
+  labs(
+  title = "Total gross earnings over 1000 million",
+  subtitle = "By their Bechdel test results",
+  x = "Gross earnings bracket",
+  y = "Number of movies",
+  caption = "Figure 5"
+  )
+
+plot_grid(p1,p2)
 
 ```
 
@@ -158,19 +175,7 @@ This figure looks at all the movies in the dataset with total gross earnings (do
 
 ```{r upper_bracket, echo = FALSE}
 
-clean_movies %>%
-  filter(total_gross > 1000) %>%
-  group_by(bracket) %>%
-  count(bracket, result) %>%
-  ggplot(aes(x = bracket, y=n, fill = result)) +
-  geom_col() +
-  labs(
-  title = "Number of movies with total gross earnings over 1000 million",
-  subtitle = "By their Bechdel test results",
-  x = "Gross earnings bracket",
-  y = "Number of movies",
-  caption = "Figure 4"
-  )
+
 
 ```
 
@@ -178,8 +183,10 @@ This figure looks at all the movies in the dataset with total gross earnings ove
 We can see how movies which fail the Bechdel test have greater earnings in the '1000-1200', '1400-1600', '1600-1800', and '1800-2000' brackets. The '1200-1400' bracket is split more equally. The '2000+' bracket is the only bracket in the figure where "Pass" movies outnumber "Fail" movies.
 The three movies (in gross earnings order) in this bracket are: 'Star Wars: Episode I - The Phantom Menace', 'Star Wars: Episode VI - Return of the Jedi', and 'Grease'. '.5Star Wars: Episode I' and 'Grease' pass the Bechdel test. 'Star Wars: Episode VI' doesn't
 
+Distribution of Imdb ratings is left-skewed in both cases and quite similar. The distributions between 2 and 8 ratings are quite similar. However, many more movies which fail the Bechdel test have an 8+ rating.
+
 ```{r rating_distribution, warning = FALSE, echo=FALSE}
-clean_movies %>%
+p1 <- clean_movies %>%
   group_by(result, imdb_rating) %>%
   count() %>%
   ggplot(aes(x = imdb_rating, y = n, fill = result, color = result)) +
@@ -190,7 +197,72 @@ clean_movies %>%
     subtitle = "by Bechdel test result",
     x = "Imdb rating",
     y = "Number of movies"
-  )
+  ) +
+  theme(plot.title = element_text(size=11),
+        plot.subtitle = element_text(size=9),
+        axis.title = element_text(size = 8))
+
+p2 <- clean_movies %>%
+  group_by(result, imdb_rating) %>%
+  ggplot(aes(x = imdb_rating, y = total_gross, fill = result, color = result)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~result, nrow = 1, ncol = 2) +
+  labs(
+    title = "Total gross earnings by Imdb rating",
+    subtitle = "by Bechdel test result",
+    x = "Imdb rating",
+    y = "Total gross earnings"
+  ) +
+  theme(plot.title = element_text(size=11),
+        plot.subtitle = element_text(size=9),
+        axis.title = element_text(size = 8))
+
+
+plot_grid(p1, p2)
 ```
 
-Distribution of Imdb ratings is left-skewed in both cases and quite similar. The distributions between 2 and 8 ratings are quite similar. However, many more movies which fail the Bechdel test have an 8+ rating.
+The next two figures look at the movies with a higher Imdb rating than 8 and their frequency and total gross earnings distribution
+
+```{r highest_rated_movies, echo = FALSE, warning=FALSE, fig.show="hold"}
+p3 <- clean_movies %>%
+  filter(imdb_rating >= 8) %>%
+  group_by(result, imdb_rating) %>%
+  count() %>%
+  ggplot(aes(x = imdb_rating, y = n, fill = result, color = result)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~result, nrow = 1, ncol = 2) +
+  labs(
+    title = "Frequencies against Imdb rating",
+    subtitle = "by Bechdel test result",
+    x = "Imdb rating",
+    y = "Number of movies"
+  ) +
+  theme(plot.title = element_text(size=11),
+        plot.subtitle = element_text(size=9),
+        axis.title = element_text(size = 8))
+
+p4 <- clean_movies %>%
+  filter(imdb_rating >= 8) %>%
+  group_by(result, imdb_rating) %>%
+  ggplot(aes(x = imdb_rating, y = total_gross, fill = result, color = result)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~result, nrow = 1, ncol = 2) +
+  labs(
+    title = "Total gross earnings against Imdb rating",
+    subtitle = "by Bechdel test result",
+    x = "Imdb rating",
+    y = "Total gross earnings"
+  ) +
+  theme(plot.title = element_text(size=11),
+        plot.subtitle = element_text(size=9),
+        axis.title=element_text(size=8))
+
+plot_grid(p3, p4)
+```
+
+```{r high_ratings_gross, echo = FALSE}
+
+
+
+```
+
