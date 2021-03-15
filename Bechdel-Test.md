@@ -43,12 +43,12 @@ clean_movies$bracket <- factor(clean_movies$bracket, levels = bracket_levels)
 
 ### Figures
 
-<img src="Bechdel-Test_files/figure-gfm/pass_and_fail-1.png" height="60%" style="display: block; margin: auto;" />
+<img src="Bechdel-Test_files/figure-gfm/pass_and_fail-1.png" height="50%" style="display: block; margin: auto;" />
 
 Figure 1 shows how there are more movies which fail the Bechdel test. In
 fact, there are 991 movies that fail the test, and 803 which pass it.
 
-<img src="Bechdel-Test_files/figure-gfm/passes_fails_per_year-1.png" height="60%" style="display: block; margin: auto;" />
+<img src="Bechdel-Test_files/figure-gfm/passes_fails_per_year-1.png" height="50%" style="display: block; margin: auto;" />
 
 Figure 2 shows the evolution from 1970 to 2013 in the number of movies
 which pass or fail the Bechdel test. Even though the Bechdel test was
@@ -57,7 +57,7 @@ pre/post-Bechdel shift. The figure shows how approximately the number of
 movies released every year which fail the Bechdel test is greater than
 the number of movies which pass it.
 
-<img src="Bechdel-Test_files/figure-gfm/rates_of_change-1.png" height="60%" style="display: block; margin: auto;" />
+<img src="Bechdel-Test_files/figure-gfm/rates_of_change-1.png" height="50%" style="display: block; margin: auto;" />
 
 This figure illustrates the rate of change of movies which pass or fail
 the Bechdel test. Ifthe Bechdel test had a relevant impact in the movie
@@ -66,7 +66,9 @@ making industry, we would see a positive trend in the ‘pass’ graph after
 indicates how the movie industry has upscaled it’s movie production
 without taking into consideration the Bechdel test .
 
-<img src="Bechdel-Test_files/figure-gfm/lower_bracket-1.png" height="60%" style="display: block; margin: auto;" />
+<img src="Bechdel-Test_files/figure-gfm/under_1000_million-1.png" height="50%" style="display: block; margin: auto;" />
+
+<img src="Bechdel-Test_files/figure-gfm/over_1000_million-1.png" height="50%" style="display: block; margin: auto;" />
 
 This figure looks at all the movies in the dataset with total gross
 earnings (domestic and international) under 1000 million USD. In all of
@@ -88,9 +90,9 @@ Distribution of Imdb ratings is left-skewed in both cases and quite
 similar. The distributions between 2 and 8 ratings are quite similar.
 However, many more movies which fail the Bechdel test have an 8+ rating.
 
-<img src="Bechdel-Test_files/figure-gfm/rating_distribution-1.png" height="60%" style="display: block; margin: auto;" />
+<img src="Bechdel-Test_files/figure-gfm/rating_distribution-1.png" height="50%" style="display: block; margin: auto;" />
 
 The next two figures look at the movies with a higher Imdb rating than 8
 and their frequency and total gross earnings distribution
 
-<img src="Bechdel-Test_files/figure-gfm/highest_rated_movies-1.png" height="60%" style="display: block; margin: auto;" />
+<img src="Bechdel-Test_files/figure-gfm/highest_rated_movies-1.png" height="50%" style="display: block; margin: auto;" />

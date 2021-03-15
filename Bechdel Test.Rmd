@@ -10,7 +10,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
-knitr::opts_chunk$set(fig.align = 'center', out.height = '60%')
+knitr::opts_chunk$set(fig.align = 'center', out.height = '50%')
 ```
 
 ```{r libraries, message = FALSE, include = FALSE}
@@ -137,9 +137,9 @@ rates_of_change %>%
 
 This figure illustrates the rate of change of movies which pass or fail the Bechdel test. Ifthe  Bechdel test had a relevant impact in the movie making industry, we would see a positive trend in the 'pass' graph after 1985, which is not the case. Both graphs having similar rates of change indicates how the movie industry has upscaled it's movie production without taking into consideration the Bechdel test .
 
-```{r lower_bracket, echo = FALSE}
+```{r under_1000_million, echo = FALSE}
 
-p1 <- clean_movies %>%
+clean_movies %>%
   filter(total_gross < 1000) %>%
   group_by(bracket) %>%
   count(bracket, result) %>%
@@ -152,8 +152,12 @@ p1 <- clean_movies %>%
     y = "Number of movies",
     caption = "Figure 4"
   )
+```
 
-p2 <- clean_movies %>%
+This figure looks at all the movies in the dataset with total gross earnings (domestic and international) under 1000 million USD. In all of the brackets the distribution of gross earnings is roughly split equally between movies which pass or not the Bechdel test.
+
+``` {r over_1000_million, echo = FALSE}
+clean_movies %>%
   filter(total_gross > 1000) %>%
   group_by(bracket) %>%
   count(bracket, result) %>%
@@ -167,17 +171,9 @@ p2 <- clean_movies %>%
   caption = "Figure 5"
   )
 
-plot_grid(p1,p2)
 
 ```
 
-This figure looks at all the movies in the dataset with total gross earnings (domestic and international) under 1000 million USD. In all of the brackets the distribution of gross earnings is roughly split equally between movies which pass or not the Bechdel test.
-
-```{r upper_bracket, echo = FALSE}
-
-
-
-```
 
 This figure looks at all the movies in the dataset with total gross earnings over 1000 million.
 We can see how movies which fail the Bechdel test have greater earnings in the '1000-1200', '1400-1600', '1600-1800', and '1800-2000' brackets. The '1200-1400' bracket is split more equally. The '2000+' bracket is the only bracket in the figure where "Pass" movies outnumber "Fail" movies.
